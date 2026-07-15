@@ -37,7 +37,7 @@ class UserService {
         self.currentUser = nil
     }
     
-    static func featchUsers() async throws -> [User] {
+    static func fetchUsers() async throws -> [User] {
         guard let currentUid = Auth.auth().currentUser?.uid else {
             return []
         }

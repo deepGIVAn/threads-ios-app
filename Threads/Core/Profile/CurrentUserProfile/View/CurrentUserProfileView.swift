@@ -1,22 +1,27 @@
 //
-//  ProfileView.swift
+//  CurrentUserProfileView.swift
 //  Threads
 //
-//  Created by Deepak on 12/07/26.
+//  Created by Deepak on 15/07/26.
 //
 
 import SwiftUI
 
-struct ProfileView: View {
-    let user: User
+struct CurrentUserProfileView: View {
+    @StateObject var viewModel = CurrentUserProfileViewModel()
     @State private var selectedFilter: ProfileThreadFilter = .threads
     
+    private var currentUser: User? {
+        return viewModel.currentUser
+    }
+
     var body: some View {
-        VStack {
+        NavigationStack {
             ScrollView(showsIndicators: false) {
                 // bio and stats
                 VStack(spacing: 20) {
-                    ProfileHeaderView(user: user)
+
+                    ProfileHeaderView(user: currentUser)
 
                     Button {
 
@@ -62,11 +67,26 @@ struct ProfileView: View {
                 }
             }
             .padding(.horizontal)
+            .navigationTitle("Profile")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        do {
+                            try AuthService.shared.signOut()
+                        } catch {
+                            // TODO: Present an alert/toast to the user
+                            print("Sign out failed: \(error)")
+                        }
+                    } label: {
+                        Image(systemName: "line.3.horizontal")
+                    }
+                }
+            }
         }
     }
 }
 
 #Preview {
-    ProfileView(user: DeveloperPreview.shared.user)
+    CurrentUserProfileView()
 }
