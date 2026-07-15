@@ -10,7 +10,7 @@ import FirebaseAuth
 import FirebaseFirestore
 import Combine
 
-class UserService {
+class UserService: ObservableObject {
     @Published var currentUser: User?
     
     init() {

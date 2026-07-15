@@ -8,17 +8,32 @@
 import SwiftUI
 
 struct CreateThreadView: View {
+    @StateObject var viewModel = CreateThreadViewModel()
     @State private var caption = ""
     @Environment(\.dismiss) var dismiss
+  
+    @ObservedObject private var userService = UserService.shared
+
+    private var user: User? {
+        userService.currentUser
+    }
+    
+//    private var user: User? {
+//        return UserService.shared.currentUser
+//    }
     
     var body: some View {
         NavigationStack {
             VStack {
                 HStack(alignment: .top) {
-                    CircularProfileImageView(user: nil, size: .small)
+                    if let user {
+                        CircularProfileImageView(user: user, size: .small)
+                    } else {
+                        CircularProfileImageView(user: nil, size: .small)
+                    }
                     
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("deepak")
+                        Text(user?.username ?? "")
                             .fontWeight(.semibold)
                         
                         TextField("Start a thread...", text: $caption, axis: .vertical)
@@ -55,7 +70,10 @@ struct CreateThreadView: View {
 
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Post") {
-                        
+                        Task {
+                            try await viewModel.uploadThread(caption: caption)
+                            dismiss()
+                        }
                     }
                     .opacity(caption.isEmpty ? 0.5 : 1)
                     .disabled(caption.isEmpty)
