@@ -9,7 +9,6 @@ import SwiftUI
 
 struct CurrentUserProfileView: View {
     @StateObject var viewModel = CurrentUserProfileViewModel()
-    @State private var selectedFilter: ProfileThreadFilter = .threads
     
     private var currentUser: User? {
         return viewModel.currentUser
@@ -26,44 +25,21 @@ struct CurrentUserProfileView: View {
                     Button {
 
                     } label: {
-                        Text("Follow")
+                        Text("Edit Profile")
                             .font(.subheadline)
                             .fontWeight(.semibold)
-                            .foregroundColor(Color(.white))
+                            .foregroundColor(Color(.black))
                             .frame(width: 352, height: 32)
-                            .background(Color(.black))
+                            .background(Color(.white))
                             .cornerRadius(10)
+                            .overlay {
+                                RoundedRectangle(cornerRadius: 10)
+                                    .stroke(Color(.systemGray4), lineWidth: 1)
+                            }
                     }
 
                     // user content list view
-                    VStack {
-                        HStack {
-                            ForEach(ProfileThreadFilter.allCases) { filter in
-                                VStack(spacing: 6) {
-                                    Text(filter.title)
-                                        .font(.subheadline)
-                                        .fontWeight(selectedFilter == filter ? .semibold : .regular)
-                                        .frame(maxWidth: .infinity)
-                                    Rectangle()
-                                        .foregroundColor(selectedFilter == filter ? Color(.black) : Color(.clear))
-                                        .frame(height: 1)
-                                }
-                                .frame(maxWidth: .infinity)
-                                .onTapGesture {
-                                    withAnimation(.spring()) {
-                                        selectedFilter = filter
-                                    }
-                                }
-                            }
-                        }
-
-                        LazyVStack {
-                            ForEach (0 ... 10, id: \.self) { _ in
-                                ThreadCell()
-                            }
-                        }
-                    }
-                    .padding(.vertical, 8)
+                    UserContentListView()
                 }
             }
             .padding(.horizontal)
